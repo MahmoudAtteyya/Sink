@@ -5,8 +5,7 @@ interface Link {
 }
 
 export default eventHandler(async (event) => {
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
+  const KV = getKV(event)
   const list: Link[] = []
   let finalCursor: string | undefined
 

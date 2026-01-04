@@ -1,8 +1,8 @@
 import { z } from 'zod'
+import { getKV } from '../../utils/storage-adapter'
 
 export default eventHandler(async (event) => {
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
+  const KV = getKV(event)
   const { limit, cursor } = await getValidatedQuery(event, z.object({
     limit: z.coerce.number().max(1024).default(20),
     cursor: z.string().trim().max(1024).optional(),

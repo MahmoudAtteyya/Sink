@@ -1,23 +1,23 @@
 import type { LinkSchema } from '@@/schemas/link'
 import type { z } from 'zod'
 import { parsePath, withQuery } from 'ufo'
+import { getKV } from '../utils/storage-adapter'
 
 export default eventHandler(async (event) => {
   const { pathname: slug } = parsePath(event.path.replace(/^\/|\/$/g, '')) // remove leading and trailing slashes
   const { slugRegex, reserveSlug } = useAppConfig(event)
-  const { homeURL, linkCacheTtl, redirectWithQuery, caseSensitive } = useRuntimeConfig(event)
-  const { cloudflare } = event.context
+  const { homeURL, redirectWithQuery, caseSensitive } = useRuntimeConfig(event)
 
   if (event.path === '/' && homeURL)
     return sendRedirect(event, homeURL)
 
-  if (slug && !reserveSlug.includes(slug) && slugRegex.test(slug) && cloudflare) {
-    const { KV } = cloudflare.env
+  if (slug && !reserveSlug.includes(slug) && slugRegex.test(slug)) {
+    const KV = getKV(event)
 
     let link: z.infer<typeof LinkSchema> | null = null
 
     const getLink = async (key: string) =>
-      await KV.get(`link:${key}`, { type: 'json', cacheTtl: linkCacheTtl })
+      await KV.get(`link:${key}`, { type: 'json' })
 
     const lowerCaseSlug = slug.toLowerCase()
     link = await getLink(caseSensitive ? slug : lowerCaseSlug)

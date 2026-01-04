@@ -1,4 +1,5 @@
 import { LinkSchema } from '@@/schemas/link'
+import { getKV } from '../../utils/storage-adapter'
 
 defineRouteMeta({
   openAPI: {
@@ -33,8 +34,7 @@ export default eventHandler(async (event) => {
     link.slug = link.slug.toLowerCase()
   }
 
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
+  const KV = getKV(event)
   const existingLink = await KV.get(`link:${link.slug}`)
   if (existingLink) {
     throw createError({

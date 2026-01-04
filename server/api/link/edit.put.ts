@@ -1,5 +1,6 @@
 import type { z } from 'zod'
 import { LinkSchema } from '@@/schemas/link'
+import { getKV } from '../../utils/storage-adapter'
 
 export default eventHandler(async (event) => {
   const { previewMode } = useRuntimeConfig(event).public
@@ -10,8 +11,7 @@ export default eventHandler(async (event) => {
     })
   }
   const link = await readValidatedBody(event, LinkSchema.parse)
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
+  const KV = getKV(event)
 
   const existingLink: z.infer<typeof LinkSchema> | null = await KV.get(`link:${link.slug}`, { type: 'json' })
   if (existingLink) {

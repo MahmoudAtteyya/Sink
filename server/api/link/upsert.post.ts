@@ -1,4 +1,5 @@
 import { LinkSchema } from '@@/schemas/link'
+import { getKV } from '../../utils/storage-adapter'
 
 export default eventHandler(async (event) => {
   const link = await readValidatedBody(event, LinkSchema.parse)
@@ -8,8 +9,7 @@ export default eventHandler(async (event) => {
     link.slug = link.slug.toLowerCase()
   }
 
-  const { cloudflare } = event.context
-  const { KV } = cloudflare.env
+  const KV = getKV(event)
 
   // Check if link exists
   const existingLink = await KV.get(`link:${link.slug}`, { type: 'json' })
