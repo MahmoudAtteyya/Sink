@@ -5,7 +5,7 @@ import { currentLocales } from './i18n/i18n'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
-    '@nuxthub/core',
+    // '@nuxthub/core', // Disabled for non-Cloudflare deployment
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
     '@nuxt/eslint',
