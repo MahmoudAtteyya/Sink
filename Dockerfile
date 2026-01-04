@@ -13,7 +13,7 @@ WORKDIR /app
 COPY . .
 
 # Install and build
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 ENV NODE_ENV=production
 ENV NITRO_PRESET=node-server
 RUN pnpm run build
